@@ -5,7 +5,28 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Views\Employee\**" />
+    <Content Remove="Views\Employee\**" />
+    <EmbeddedResource Remove="Views\Employee\**" />
+    <None Remove="Views\Employee\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BLL\EmployeeManager.BLL.csproj" />
+    <ProjectReference Include="..\DAL\EmployeeManager.DAL.csproj" />
+    <ProjectReference Include="..\EmployeeManager.Entities\EmployeeManager.Entities.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Views\Employee\Create.cshtml" />
+    <None Include="Views\Employee\Delete.cshtml" />
+    <None Include="Views\Employee\Edit.cshtml" />
+    <None Include="Views\Employee\Index.cshtml" />
   </ItemGroup>
 
 </Project>

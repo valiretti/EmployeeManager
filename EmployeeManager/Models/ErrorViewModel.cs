@@ -1,5 +1,3 @@
-using System;
-
 namespace EmployeeManager.Models
 {
     public class ErrorViewModel
