@@ -22,7 +22,8 @@ namespace EmployeeManager
 
         public void ConfigureServices(IServiceCollection services)
         {
-            string connectionString = "Server=.;Initial Catalog=EmployeeManager;Integrated Security=True";
+            string connectionString = Configuration.GetConnectionString("DefaultConnection");
+
             services.AddTransient<IEmployeeRepository, EmployeeRepository>(provider => new EmployeeRepository(connectionString));
             services.AddTransient<ICompanyRepository, CompanyRepository>(provider => new CompanyRepository(connectionString));
             services.AddTransient<ICompanyService, CompanyService>();
