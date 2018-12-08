@@ -1,5 +1,6 @@
 ﻿using EmployeeManager.BLL.Interfaces;
 using EmployeeManager.Entities;
+using EmployeeManager.Entities.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeManager.Controllers
@@ -31,8 +32,15 @@ namespace EmployeeManager.Controllers
         {
             if (ModelState.IsValid)
             {
-                _companyService.Add(company);
-                return RedirectToAction("Index");
+                try
+                {
+                    _companyService.Add(company);
+                    return RedirectToAction("Index");
+                }
+                catch (UniquenessViolationException ex)
+                {
+                    ModelState.AddModelError(nameof(company.Name), ex.Message);
+                }
             }
 
             return View(company);
@@ -51,8 +59,15 @@ namespace EmployeeManager.Controllers
         {
             if (ModelState.IsValid)
             {
-                _companyService.Update(company);
-                return RedirectToAction("Index");
+                try
+                {
+                    _companyService.Update(company);
+                    return RedirectToAction("Index");
+                }
+                catch (UniquenessViolationException ex)
+                {
+                    ModelState.AddModelError(nameof(company.Name), ex.Message);
+                }
             }
 
             return View(company);
@@ -72,8 +87,16 @@ namespace EmployeeManager.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(Company company)
         {
-            _companyService.Delete(company.Id);
-            return RedirectToAction("Index");
+            try
+            {
+                _companyService.Delete(company.Id);
+                return RedirectToAction("Index");
+            }
+            catch (RelatedEntitiesExistException ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                return View(_companyService.Get(company.Id));
+            }
         }
     }
 }

@@ -7,10 +7,11 @@ using System.Text;
 using Dapper;
 using EmployeeManager.DAL.Interfaces;
 using EmployeeManager.Entities;
+using EmployeeManager.Entities.Exceptions;
 
 namespace EmployeeManager.DAL.Repositories
 {
-   public class CompanyRepository : ICompanyRepository
+    public class CompanyRepository : ICompanyRepository
     {
         private readonly string _connectionString;
 
@@ -37,29 +38,50 @@ namespace EmployeeManager.DAL.Repositories
 
         public void Create(Company company)
         {
-            using (IDbConnection db = new SqlConnection(_connectionString))
+            try
             {
-                var sqlQuery = "INSERT INTO Company (Name, Size, LegalForm) " +
-                               "VALUES(@Name, @Size, @LegalForm)";
-                db.Execute(sqlQuery, company);
+                using (IDbConnection db = new SqlConnection(_connectionString))
+                {
+                    var sqlQuery = "INSERT INTO Company (Name, Size, LegalForm) " +
+                                   "VALUES(@Name, @Size, @LegalForm)";
+                    db.Execute(sqlQuery, company);
+                }
+            }
+            catch (SqlException ex) when (ex.Number == 2627)
+            {
+                throw new UniquenessViolationException($"The company with the name {company.Name} already exists.", ex);
             }
         }
 
         public void Update(Company company)
         {
-            using (IDbConnection db = new SqlConnection(_connectionString))
+            try
             {
-                var sqlQuery = "UPDATE Company SET Name = @Name, Size = @Size, LegalForm = @LegalForm WHERE Id = @Id";
-                db.Execute(sqlQuery, company);
+                using (IDbConnection db = new SqlConnection(_connectionString))
+                {
+                    var sqlQuery = "UPDATE Company SET Name = @Name, Size = @Size, LegalForm = @LegalForm WHERE Id = @Id";
+                    db.Execute(sqlQuery, company);
+                }
+            }
+            catch (SqlException ex) when (ex.Number == 2627)
+            {
+                throw new UniquenessViolationException($"The company with the name {company.Name} already exists.", ex);
             }
         }
 
         public void Delete(int id)
         {
-            using (IDbConnection db = new SqlConnection(_connectionString))
+            try
             {
-                var sqlQuery = "DELETE FROM Company WHERE Id = @id";
-                db.Execute(sqlQuery, new { id });
+                using (IDbConnection db = new SqlConnection(_connectionString))
+                {
+                    var sqlQuery = "DELETE FROM Company WHERE Id = @id";
+                    db.Execute(sqlQuery, new { id });
+                }
+            }
+            catch (SqlException ex) when (ex.Number == 547)
+            {
+                throw new RelatedEntitiesExistException($"Cannot delete company with employees.", ex);
             }
         }
     }

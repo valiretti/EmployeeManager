@@ -22,22 +22,9 @@ namespace EmployeeManager.DAL.Repositories
         {
             using (IDbConnection db = new SqlConnection(_connectionString))
             {
-                //return db.Query<Employee, Company, EmployeeWithCompany>(
-                //    "SELECT * FROM Employee e JOIN Company c ON e.CompanyId = c.Id",
-                //    (e, c) => new EmployeeWithCompany
-                //    {
-                //        Id = e.Id,
-                //        FirstName = e.FirstName,
-                //        LastName = e.LastName,
-                //        Patronymic = e.Patronymic,
-                //        Position = e.Position,
-                //        EmploymentDate = e.EmploymentDate,
-                //        CompanyId = e.CompanyId,
-                //        CompanyName = c.Name
-                //    }).ToList();
                 return db.Query<EmployeeWithCompany, Company, EmployeeWithCompany>(
                     "SELECT * FROM Employee e JOIN Company c ON e.CompanyId = c.Id",
-                    (e, c) => 
+                    (e, c) =>
                     {
                         e.CompanyName = c.Name;
                         return e;
